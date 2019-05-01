@@ -1,8 +1,8 @@
 <template>
   <div class="calendar">
     <date-picker v-model="date"
-      v-bind:selectedMonth="month" 
-      v-bind:selectedYear="year" 
+      :selectedMonth="month" 
+      :selectedYear="year" 
       @nextMonth="onNextMonth" 
       @previousMonth="onPreviousMonth"></date-picker>
     <month-picker v-model="month"></month-picker>
@@ -22,44 +22,47 @@ import YearPicker from './YearPicker.vue';
   components: {
     DatePicker,
     MonthPicker,
-    YearPicker
+    YearPicker,
   },
 })
 export default class Calendar extends Vue {
 
-  year:number = 0;
-  month:number = 0;
+  today:Date = new Date();
+  public year: number = 0;
+  public month: number = 0;
 
-  get date(){
+  get date() {
       return this.value;
   }
 
-  set date(val:Date){
-      this.$emit("input", val);
+  set date(val: Date) {
+      this.$emit('input', val);
   }
 
-  @Prop({default: new Date()})
-    value!:Date
+  @Prop({default: () => new Date()})
+    public value!: Date;
 
-  onNextMonth(){
-    if(this.month === 11){
+  public onNextMonth() {
+    if (this.month === 11) {
         this.month = 0;
         this.year ++;
-    }else{
+    } else {
         this.month ++;
     }
   }
 
-  onPreviousMonth(){
-    if(this.month === 0){
+  public onPreviousMonth() {
+    if (this.month === 0) {
         this.month = 11;
         this.year --;
-    }else{
+    } else {
         this.month --;
     }
   }
 
-  created(){
+  public created() {
+    // this.year = this.value ? this.value.getFullYear() : this.today.getFullYear() ;
+    // this.month = this.value ? this.value.getMonth() : this.today.getMonth();
     this.year = this.value.getFullYear();
     this.month = this.value.getMonth();
   }

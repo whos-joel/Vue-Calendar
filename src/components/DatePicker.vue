@@ -1,5 +1,5 @@
 <template>
-    <div class="date-picker">
+    <!-- <div class="date-picker">
         <table class="month">
             <tr>
                 <td colspan="5">{{monthYear}}</td>
@@ -23,115 +23,167 @@
                 </td>
             </tr>
         </table>
+    </div> -->
+    <div class="date-picker">
+        <div class="btn-container">
+            <div class="month-year-btn btn">
+                {{monthYear}}
+            </div>
+            <div>
+                <a href="#" class="btn" @click="$emit('previousMonth')">
+                    &lt;
+                </a>
+            </div>
+            <div>
+                <a href="#" class="btn" @click="nextMonth()">
+                    &gt;
+                </a>
+            </div>
+        </div>
+        <div class="days-of-the-week">
+            <div class="day" v-for="day in dayNames" :key="day">
+                {{day}}
+            </div>
+        </div>
+        <div class="dates">
+            <div class="date" v-for="date in dates" :key="date.id">
+                <a href="#" 
+                    :class="{'today' : date.isToday, 'selected': date.isSelected, 'greyed-out': !date.isInSelectedMonth}"
+                    :data-date="date.ticks"
+                    @click="setDate(date.value)">
+                    {{date.value}}
+                </a>
+            </div>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import moment from 'moment'
-import DatePickerData from './DatePickerData'
+import moment from 'moment';
+import DatePickerData from './DatePickerData';
 
 @Component
-export default class DatePicker extends Vue{
-    today:Date = new Date();
-    //selectedYear:number = 0;
-    //selectedMonth:number = 0;
-    dayNames:string[] = ["Su","Mo","Tu","We","Th","Fr","Sa"];
-    //data:DatePickerData[] = [];
+export default class DatePicker extends Vue {
+    //public today: Date = new Date();
+    // selectedYear:number = 0;
+    // selectedMonth:number = 0;
+    public dayNames: string[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    // data:DatePickerData[] = [];
 
-    get monthYear(){
-        return moment(new Date(this.selectedYear, this.selectedMonth)).format("MMM YYYY");
+    get monthYear() {
+        return moment(new Date(this.selectedYear, this.selectedMonth)).format('MMM YYYY');
     }
 
-    get dates(){
-        //this.data = this.getDates(this.selectedYear, this.selectedMonth);
+    get dates() {
+        // this.data = this.getDates(this.selectedYear, this.selectedMonth);
         return this.getDates(this.selectedYear, this.selectedMonth);
     }
 
     @Prop({default: new Date()})
-    value!: Date;
+    public value!: Date;
 
     @Prop({default: new Date().getMonth()})
-    selectedMonth!: number;
+    public selectedMonth!: number;
 
     @Prop({default: new Date().getFullYear()})
-    selectedYear!: number;
+    public selectedYear!: number;
 
-    @Prop({default:1})
-    firstDayOfTheWeek!:number;
+    @Prop({default: 1})
+    public firstDayOfTheWeek!: number;
 
-    getDates(year:number, month:number):DatePickerData[][]{
-        let data:DatePickerData[][] = [];
-        for(var i = 0; i < 6; i++){
-            data[i] = [];
-            for(var j = 0; j < 7; j++){         
-                var id = j + (i * 7);
-                data[i][j] = this.getData(id)
-            }
+    public getDates(year: number, month: number): DatePickerData[] {
+        const data: DatePickerData[] = [];
+        for (let i = 0; i < 42; i++) {
+            const id = i;
+            data[i] = this.getData(id);
         }
         return data;
     }
 
-    getData(n:number){       
-        let date = this.getDate(n + 1)
-        let isToday = date.getTime() === new Date().setHours(0,0,0,0);
-        let selected = date.getTime() === this.value.getTime();
-        let inSelectedMonth = date.getMonth() === this.selectedMonth;
-        
-        return new DatePickerData(n, date.getDate(), isToday, selected, inSelectedMonth);
+    public getData(n: number) {     
+        const date = this.getDate(n + 1);
+        const isToday = date.getTime() === new Date().setHours(0, 0, 0, 0);
+        const selected = date.getTime() === this.value.getTime();
+        const inSelectedMonth = date.getMonth() === this.selectedMonth;
+
+        return new DatePickerData(n, date, isToday, selected, inSelectedMonth);
     }
 
-    getDate(n:number){
-        let day = n - this.getFirstDayOfMonth(this.selectedYear, this.selectedMonth);
+    public getDate(n: number) {
+        const day = n - this.getFirstDayOfMonth(this.selectedYear, this.selectedMonth);
         return new Date(this.selectedYear, this.selectedMonth, day);
     }
 
-    getFirstDayOfMonth(year:number, month:number){
-        return new Date(year, month, 1).getDay()
+    public getFirstDayOfMonth(year: number, month: number) {
+        return new Date(year, month, 1).getDay();
     }
 
-    @Emit("nextMonth")
-    nextMonth(){
-        
+    @Emit('nextMonth')
+    public nextMonth() {
+
     }
 
-    @Emit("previousMonth")
-    previousMonth(){
-        
+    @Emit('previousMonth')
+    public previousMonth() {
+
     }
 
-    @Emit("input")
-    setDate(date:number){
+    @Emit('input')
+    public setDate(date: number) {
+        console.info(date);
         return new Date(this.selectedYear, this.selectedMonth, date, 0, 0, 0, 0);
     }
 
-    created(){
-        //this.selectedDate = this.value.getDate();
-        //this.selectedMonth = this.value ? this.value.getMonth() : this.today.getMonth();
-        //this.selectedYear = this.value ? this.value.getFullYear() : this.today.getFullYear();
-        
+    public created() {
+        // this.selectedDate = this.value.getDate();
+        // this.selectedMonth = this.value ? this.value.getMonth() : this.today.getMonth();
+        // this.selectedYear = this.value ? this.value.getFullYear() : this.today.getFullYear();
+
     }
 }
 </script>
 
 <style lang="less">
     .date-picker{
-        .month{
-            td{
-                width: 30px;
-                height: 30px;
-                border: 1px solid #ccc;
-                cursor: pointer;
-                &.today{
-                    border-color: #0055aa;
+        width: 400px;
+        height: 500px;
+        .dates, .days-of-the-week, .btn-container{
+            display: flex;
+            flex-wrap: wrap;
+            
+            > div{
+                width: calc(100% / 7);
+                padding: 2px;
+                a{
+                    border: 1px solid #ccc;
+                    display: flex;
+                    cursor: pointer;
+                    text-decoration: none;
+                    height: 100%;
+                    line-height: 1;
+                    align-items: center;
+                    justify-content: center;
+                    &.today{
+                        border-color: #0055aa;
+                    }
+                    &.selected{
+                        border-color: #009922;
+                    }
+                    &.greyed-out{
+                        border-color: #eee;
+                        color: #ccc;
+                    }
                 }
-                &.selected{
-                    border-color: #009922;
-                }
-                &.greyed-out{
-                    border-color: #eee;
-                    color: #ccc;
-                }
+            }
+        }
+        .dates{
+            height: 300px;
+        }
+        .btn-container{
+            justify-content: flex-end;
+            .month-year-btn{
+                flex-grow: 1;
             }
         }
     }

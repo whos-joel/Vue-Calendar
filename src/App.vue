@@ -12,11 +12,11 @@ import Calendar from './components/Calendar.vue';
 
 @Component({
   components: {
-    Calendar
+    Calendar,
   },
 })
 export default class App extends Vue {
-  date:Date | null = new Date(1970, 11, 14);
+  public date: Date = new Date();
 }
 </script>
 
@@ -28,5 +28,8 @@ export default class App extends Vue {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+*{
+  box-sizing: border-box;
 }
 </style>

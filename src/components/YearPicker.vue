@@ -31,45 +31,45 @@
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 
 @Component
-export default class YearPicker extends Vue{
+export default class YearPicker extends Vue {
 
-    page:number = 0;
-    
+    public page: number = 0;
+
     @Prop(Number)
-    value!:number;
+    public value!: number;
 
-    get years(){
-        let data: Object[][] = [];
-        for(var i = 0; i < 4; i++){
+    get years() {
+        const data: object[][] = [];
+        for (let i = 0; i < 4; i++) {
             data[i] = [];
-            for(var j = 0; j < 4; j++){         
-                var id = j + (i * 4);
-                let val = (this.value + id) + (this.page * 16)
+            for (let j = 0; j < 4; j++) {
+                const id = j + (i * 4);
+                const val = (this.value + id) + (this.page * 16);
                 data[i][j] = {
-                    id: id,
+                    id,
                     value: val,
-                    isSelected: val === this.value
-                }
+                    isSelected: val === this.value,
+                };
             }
         }
         return data;
     }
 
-    previousYear(){
+    public previousYear() {
         this.page--;
     }
 
-    nextYear(){
+    public nextYear() {
         this.page++;
     }
 
-    setYear(val:number){
+    public setYear(val: number) {
         this.page = 0;
         this.$emit('input', val);
     }
 
-    created(){
-        
+    public created() {
+
     }
 }
 </script>

@@ -19,26 +19,26 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import moment from 'moment'
+import moment from 'moment';
 
 @Component
-export default class MonthPicker extends Vue{
-    
-    @Prop(Number)
-    value!:number;
+export default class MonthPicker extends Vue {
 
-    get months(){
-        let data: Object[][] = [];
-        for(var i = 0; i < 3; i++){
+    @Prop(Number)
+    public value!: number;
+
+    get months() {
+        const data: object[][] = [];
+        for (let i = 0; i < 3; i++) {
             data[i] = [];
-            for(var j = 0; j < 4; j++){         
-                var val = j + (i * 4);
+            for (let j = 0; j < 4; j++) {
+                const val = j + (i * 4);
                 data[i][j] = {
                     id: val,
                     value: val,
-                    name: moment().month(val).format("MMM"),
-                    isSelected: val === this.value
-                }
+                    name: moment().month(val).format('MMM'),
+                    isSelected: val === this.value,
+                };
             }
         }
         return data;
