@@ -1,29 +1,4 @@
 <template>
-    <!-- <div class="date-picker">
-        <table class="month">
-            <tr>
-                <td colspan="5">{{monthYear}}</td>
-                <td class="btn" @click="$emit('previousMonth')">&lt;</td>
-                <td class="btn" @click="nextMonth()">&gt;</td>
-            </tr>
-            <tr>
-                <td v-for="(day, i) in dayNames"
-                    :key="i">
-                    {{day}}
-                </td>
-            </tr>
-            <tr v-for="(row, i) in dates"
-                :key="i">
-                <td v-for="data in row"
-                    :key="data.id"
-                    :class="{'today' : data.isToday, 'selected': data.isSelected, 'greyed-out': !data.isInSelectedMonth}"
-                    :data-date="data.date"
-                    @click="setDate(data.date)">
-                        {{data.date}}
-                </td>
-            </tr>
-        </table>
-    </div> -->
     <div class="date-picker">
         <div class="btn-container">
             <div class="month-year-btn btn">
