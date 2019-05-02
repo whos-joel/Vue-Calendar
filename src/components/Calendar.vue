@@ -30,6 +30,11 @@ export default class Calendar extends Vue {
   today:Date = new Date();
   public year: number = 0;
   public month: number = 0;
+   start:number = -1;
+    end:number = -1;
+    startMode:boolean = true;
+    endMode:boolean = false;
+    reset:boolean = false;
 
   get date() {
       return this.value;
