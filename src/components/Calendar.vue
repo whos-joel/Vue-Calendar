@@ -1,12 +1,16 @@
 <template>
   <div class="calendar">
-    <date-picker v-model="date"
+    <date-picker v-if="view === 'date'" v-model="date"
       :selectedMonth="month" 
       :selectedYear="year" 
       @nextMonth="onNextMonth" 
-      @previousMonth="onPreviousMonth"></date-picker>
-    <month-picker v-model="month"></month-picker>
-    <year-picker v-model="year"></year-picker>
+      @previousMonth="onPreviousMonth"
+      @view-change="onViewChange"></date-picker>
+    <month-picker v-if="view === 'month'" 
+      v-model="mm" 
+      :year="yy" 
+      @view-change="onViewChange"></month-picker>
+    <year-picker v-if="view === 'year'" v-model="yy"></year-picker>
     {{value}}
   </div>
 </template>
@@ -28,13 +32,18 @@ import YearPicker from './YearPicker.vue';
 export default class Calendar extends Vue {
 
   today:Date = new Date();
-  public year: number = 0;
-  public month: number = 0;
-   start:number = -1;
-    end:number = -1;
-    startMode:boolean = true;
-    endMode:boolean = false;
-    reset:boolean = false;
+  year: number = 0;
+  month: number = 0;
+  start:number = -1;
+  end:number = -1;
+  startMode:boolean = true;
+  endMode:boolean = false;
+  reset:boolean = false;
+  mode:string = "date";
+
+  get view(){
+    return this.mode;
+  }
 
   get date() {
       return this.value;
@@ -42,6 +51,24 @@ export default class Calendar extends Vue {
 
   set date(val: Date) {
       this.$emit('input', val);
+  }
+
+  get mm() {
+      return this.month;
+  }
+
+  set mm(val: number) {
+      this.mode = "date";
+      this.month = val;
+  }
+
+  get yy() {
+      return this.year;
+  }
+
+  set yy(val: number) {
+      this.mode = "month";
+      this.year = val;
   }
 
   @Prop({default: () => new Date()})
@@ -70,6 +97,10 @@ export default class Calendar extends Vue {
     // this.month = this.value ? this.value.getMonth() : this.today.getMonth();
     this.year = this.value.getFullYear();
     this.month = this.value.getMonth();
+  }
+
+  onViewChange(view:string){
+    this.mode = view;
   }
 }
 </script>

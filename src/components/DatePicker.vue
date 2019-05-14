@@ -1,7 +1,7 @@
 <template>
     <div class="date-picker">
         <div class="btn-container">
-            <div class="month-year-btn btn">
+            <div class="month-year-btn btn" @click="setView">
                 {{monthYear}}
             </div>
             <div>
@@ -95,8 +95,7 @@ export default class DatePicker extends Vue {
     }
 
     @Emit('nextMonth')
-    public nextMonth() {
-
+        public nextMonth() {
     }
 
     @Emit('previousMonth')
@@ -108,6 +107,11 @@ export default class DatePicker extends Vue {
     public setDate(date: number) {
         console.info(date);
         return new Date(this.selectedYear, this.selectedMonth, date, 0, 0, 0, 0);
+    }
+
+    @Emit("view-change")
+    setView(){
+        return "month";
     }
 
     public created() {
@@ -159,6 +163,7 @@ export default class DatePicker extends Vue {
             justify-content: flex-end;
             .month-year-btn{
                 flex-grow: 1;
+                cursor: pointer;
             }
         }
     }

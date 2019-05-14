@@ -1,6 +1,13 @@
 <template>
     <div class="month-picker">
         <table>
+            <tr>
+                <td colspan="4">
+                    <a href="#" @click="setYearView">
+                        {{year}}
+                    </a>
+                </td>
+            </tr>
             <tr v-for="(row, i) in months"
                 :key="i">
                 <td v-for="data in row"
@@ -27,6 +34,13 @@ export default class MonthPicker extends Vue {
     @Prop(Number)
     public value!: number;
 
+    @Prop(Number)
+    public year!: number;
+
+    get monthName(){
+        return moment().month(this.value).format("MMMM");
+    }
+
     get months() {
         const data: object[][] = [];
         for (let i = 0; i < 3; i++) {
@@ -42,6 +56,11 @@ export default class MonthPicker extends Vue {
             }
         }
         return data;
+    }
+
+    @Emit("view-change")
+    setYearView(){
+        return "year"
     }
 }
 </script>
