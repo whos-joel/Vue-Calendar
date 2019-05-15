@@ -1,5 +1,5 @@
 {
-  "name": "calendar",
+  "name": "@whos-joel/vue-calendar",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -31,5 +31,21 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "description": "## Project setup ``` npm install ```",
+  "main": "./src/components/Calendar.vue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whos-joel/Vue-Calendar.git"
+  },
+  "keywords": [
+    "Vue",
+    "Calendar"
+  ],
+  "author": "Joel Draper",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/whos-joel/Vue-Calendar/issues"
+  },
+  "homepage": "https://github.com/whos-joel/Vue-Calendar#readme"
 }
