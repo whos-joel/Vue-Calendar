@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <calendar v-model="date"></calendar>
+    <date-input v-model="date"></date-input>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
-import Calendar from './components/Calendar.vue';
+//import Calendar from './components/Calendar.vue';
+import DateInput from './components/DateInput.vue';
 
 
 @Component({
   components: {
-    Calendar,
+    DateInput,
   },
 })
 export default class App extends Vue {

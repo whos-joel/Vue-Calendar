@@ -118,7 +118,6 @@ export default class DatePicker extends Vue {
         // this.selectedDate = this.value.getDate();
         // this.selectedMonth = this.value ? this.value.getMonth() : this.today.getMonth();
         // this.selectedYear = this.value ? this.value.getFullYear() : this.today.getFullYear();
-
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar">
+  <div class="calendar" @click.stop="">
     <date-picker v-if="view === 'date'" v-model="date"
       :selectedMonth="month" 
       :selectedYear="year" 
@@ -11,7 +11,7 @@
       :year="yy" 
       @view-change="onViewChange"></month-picker>
     <year-picker v-if="view === 'year'" v-model="yy"></year-picker>
-    {{value}}
+    {{format}}
   </div>
 </template>
 
@@ -21,6 +21,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import DatePicker from './DatePicker.vue';
 import MonthPicker from './MonthPicker.vue';
 import YearPicker from './YearPicker.vue';
+import moment from 'moment';
 
 @Component({
   components: {
@@ -47,6 +48,10 @@ export default class Calendar extends Vue {
 
   get date() {
       return this.value;
+  }
+
+  get format(){
+    return moment(this.value.getTime()).format("DD/MMM/YYYY")
   }
 
   set date(val: Date) {
@@ -98,6 +103,10 @@ export default class Calendar extends Vue {
     this.year = this.value.getFullYear();
     this.month = this.value.getMonth();
   }
+
+  openCalendar(e:Event){
+      e.stopPropagation();
+    }
 
   onViewChange(view:string){
     this.mode = view;
