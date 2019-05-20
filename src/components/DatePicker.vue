@@ -124,8 +124,7 @@ export default class DatePicker extends Vue {
 
 <style lang="less">
     .date-picker{
-        width: 400px;
-        height: 500px;
+      
         .dates, .days-of-the-week, .btn-container{
             display: flex;
             flex-wrap: wrap;
