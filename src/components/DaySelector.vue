@@ -16,8 +16,8 @@
             </div>
         </div>
         <div class="days-of-the-week">
-            <div class="day" v-for="day in dayNames" :key="day">
-                {{day}}
+            <div class="day" v-for="i in 7" :key="i">
+                {{getDayName(i-1)}}
             </div>
         </div>
         <div class="dates">
@@ -39,13 +39,7 @@ import moment from 'moment';
 import DatePickerData from './DatePickerData';
 
 @Component
-export default class DatePicker extends Vue {
-    //public today: Date = new Date();
-    // selectedYear:number = 0;
-    // selectedMonth:number = 0;
-    public dayNames: string[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-    // data:DatePickerData[] = [];
-
+export default class DaySelector extends Vue {
     get monthYear() {
         return moment(new Date(this.selectedYear, this.selectedMonth)).format('MMM YYYY');
     }
@@ -94,6 +88,10 @@ export default class DatePicker extends Vue {
         return new Date(year, month, 1).getDay();
     }
 
+    getDayName(i:number){
+        return moment().day(i).format("dd")
+    }
+
     @Emit('nextMonth')
         public nextMonth() {
     }
@@ -113,25 +111,24 @@ export default class DatePicker extends Vue {
     setView(){
         return "month";
     }
-
-    public created() {
-        // this.selectedDate = this.value.getDate();
-        // this.selectedMonth = this.value ? this.value.getMonth() : this.today.getMonth();
-        // this.selectedYear = this.value ? this.value.getFullYear() : this.today.getFullYear();
-    }
 }
 </script>
 
 <style lang="less">
     .date-picker{
-      
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
         .dates, .days-of-the-week, .btn-container{
             display: flex;
             flex-wrap: wrap;
-            
+            min-height: 40px;
             > div{
                 width: calc(100% / 7);
                 padding: 2px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 a{
                     border: 1px solid #ccc;
                     display: flex;
@@ -141,6 +138,7 @@ export default class DatePicker extends Vue {
                     line-height: 1;
                     align-items: center;
                     justify-content: center;
+                    width: 100%;
                     &.today{
                         border-color: #0055aa;
                     }
@@ -155,7 +153,7 @@ export default class DatePicker extends Vue {
             }
         }
         .dates{
-            height: 300px;
+            flex-grow: 1;
         }
         .btn-container{
             justify-content: flex-end;

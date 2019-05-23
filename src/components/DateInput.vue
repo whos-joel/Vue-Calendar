@@ -1,9 +1,12 @@
 <template>
-    <div>
+    <div class="input-group">
+        <label>Start Date</label>
          <input type="test" :value="format" @click="openCalendar"/>
-         <div v-if="open" class="calendar-container">
-             <calendar v-model="date"></calendar>
-         </div>
+         <transition name="fade">
+          <div v-if="open" class="calendar-container">
+              <calendar v-model="date"></calendar>
+          </div>
+         </transition>
     </div>
 </template>
 
@@ -53,11 +56,23 @@ export default class DateInput extends Vue {
 </script>
 
 <style lang="less">
+.input-group{
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  width: 300px;
+  input{
+    margin: 5px 0;
+    padding: 5px;
+  }
+}
    .calendar-container{
      width: 400px;
+     min-height: 400px;
      border: 1px solid #ccc;
      box-shadow: 3px 3px 5px 2px rgba(0,0,0,.35);
      padding:1rem;
+      display:flex;
    }
    *{
      box-sizing: border-box;
