@@ -1,19 +1,27 @@
 <template>
   <div class="calendar" @click.stop="">
     <transition :name="transition">
-      <div v-if="dateView" class="container" 
-      :class="{
-        'slide-next' : slide === 'next',
-        'slide-previous' : slide === 'previous',
-        'slide' : slide !== ''}">
-        <day-selector v-model="date" v-for="i in numOfSelectors" :key="i" 
-          :class="{'next' : slide === 'next' && i === 2, 
-          'previous' : slide === 'previous' && i == 2}"
-          :selectedMonth="(month + i - 1) - (slide === 'previous' ? 2 : 0)" 
-          :selectedYear="year" 
-          @nextMonth="onNextMonth" 
-          @previousMonth="onPreviousMonth"
-          @view-change="onViewChange"></day-selector>
+      <div v-if="dateView" class="component-group">
+        <next-previous
+        :info="monthYear"
+        @infoClick="setMonthView"
+        @next="onNextMonth"
+        @previous="onPreviousMonth">
+        </next-previous>
+        <div class="slide-container" 
+        :class="{
+          'slide-next' : slide === 'next',
+          'slide-previous' : slide === 'previous',
+          'slide' : slide !== ''}">
+          <day-selector v-model="date" v-for="i in numOfSelectors" :key="i" 
+            :class="{'next' : slide === 'next' && i === 2, 
+            'previous' : slide === 'previous' && i == 2}"
+            :selectedMonth="(month + i - 1) - (slide === 'previous' ? 2 : 0)" 
+            :selectedYear="year" 
+            @nextMonth="onNextMonth" 
+            @previousMonth="onPreviousMonth"
+            @view-change="onViewChange"></day-selector>
+          </div>
         </div>
     </transition>
     <transition name="fade">
@@ -23,20 +31,26 @@
         @view-change="onViewChange"></month-selector>
     </transition>
      <transition name="fade">
-        <div v-if="yearView" class="container" 
-          :class="{
-            'slide-next' : slide === 'next',
-            'slide-previous' : slide === 'previous',
-            'slide' : slide !== ''}">
-          <year-selector
-            v-for="i in numOfSelectors" :key="i" 
-            :class="{'next' : slide === 'next' && i === 2, 
-              'previous' : slide === 'previous' && i == 2}" 
-            v-model="yy" 
-            :page="(yearPage + i - 1) - (slide === 'previous' ? 2 : 0)"
-            @nextYear="onNextYear"
-            @previousYear="onPreviousYear">
-          </year-selector>
+       <div v-if="yearView" class="component-group">
+            <next-previous
+            @next="onNextYear"
+            @previous="onPreviousYear">
+            </next-previous>
+           <div class="slide-container" 
+            :class="{
+              'slide-next' : slide === 'next',
+              'slide-previous' : slide === 'previous',
+              'slide' : slide !== ''}">
+              <year-selector
+                v-for="i in numOfSelectors" :key="i" 
+                :class="{'next' : slide === 'next' && i === 2, 
+                  'previous' : slide === 'previous' && i == 2}" 
+                v-model="yy" 
+                :page="(yearPage + i - 1) - (slide === 'previous' ? 2 : 0)"
+                @nextYear="onNextYear"
+                @previousYear="onPreviousYear">
+              </year-selector>
+          </div>
        </div>
      </transition>
   </div>
@@ -48,6 +62,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import DaySelector from './DaySelector.vue';
 import MonthSelector from './MonthSelector.vue';
 import YearSelector from './YearSelector.vue';
+import NextPrevious from './NextPrevious.vue';
 import moment from 'moment';
 
 @Component({
@@ -55,6 +70,7 @@ import moment from 'moment';
     DaySelector,
     MonthSelector,
     YearSelector,
+    NextPrevious
   },
 })
 export default class Calendar extends Vue {
@@ -109,6 +125,10 @@ export default class Calendar extends Vue {
   set yy(val: number) {
       this.setMonthView();
       this.year = val;
+  }
+
+  get monthYear() {
+        return moment(new Date(this.year, this.month)).format('MMM YYYY');
   }
 
   @Prop({default: () => new Date()})
@@ -241,8 +261,9 @@ export default class Calendar extends Vue {
     transform:  translateX(100%);
   }
   
-  .container{
+  .slide-container, .component-group{
     width: 100%;
     height: 100%;
+    position: absolute;
   }
 </style>

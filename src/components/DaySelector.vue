@@ -1,6 +1,6 @@
 <template>
-    <div class="date-picker">
-        <div class="btn-container">
+    <div class="day-selector">
+        <!-- <div class="btn-container">
             <div class="month-year-btn btn" @click="setView">
                 {{monthYear}}
             </div>
@@ -14,7 +14,7 @@
                     &gt;
                 </a>
             </div>
-        </div>
+        </div> -->
         <div class="days-of-the-week">
             <div class="day" v-for="i in 7" :key="i">
                 {{getDayName(i-1)}}
@@ -115,7 +115,7 @@ export default class DaySelector extends Vue {
 </script>
 
 <style lang="less">
-    .date-picker{
+    .day-selector{
         width: 100%;
         height: 100%;
         position: absolute;

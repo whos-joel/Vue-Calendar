@@ -1,6 +1,6 @@
 <template>
     <div class="year-selector">
-            <div class="btn-container">
+            <!-- <div class="btn-container">
                
                     <a href="#" @click="previousYear()" class="btn">
                         &lt;
@@ -11,7 +11,7 @@
                         &gt;
                     </a>
                
-            </div>
+            </div> -->
             <div class="years">
                 <div v-for="year in years"
                     :key="year.id" class="year">
