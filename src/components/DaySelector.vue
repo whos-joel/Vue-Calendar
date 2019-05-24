@@ -116,9 +116,21 @@ export default class DaySelector extends Vue {
 
 <style lang="less">
     .date-picker{
+        width: 100%;
+        height: 100%;
+        position: absolute;
         display: flex;
         flex-direction: column;
         justify-content: stretch;
+
+        &.next{
+            transform: translateX(100%);
+        }
+
+        &.previous{
+            transform: translateX(-100%);
+        }
+
         .dates, .days-of-the-week, .btn-container{
             display: flex;
             flex-wrap: wrap;

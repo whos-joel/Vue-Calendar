@@ -31,7 +31,8 @@ import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 @Component
 export default class YearPicker extends Vue {
 
-    public page: number = 0;
+    @Prop(Number)
+    public page!: number;
 
     @Prop(Number)
     public value!: number;
@@ -50,12 +51,14 @@ export default class YearPicker extends Vue {
         return data;
     }
 
+    @Emit("previousYear")
     public previousYear() {
-        this.page--;
+        //this.page--;
     }
 
+    @Emit("nextYear")
     public nextYear() {
-        this.page++;
+        //this.page++;
     }
 
     public setYear(val: number) {
@@ -71,8 +74,20 @@ export default class YearPicker extends Vue {
 
 <style lang="less">
     .year-selector{
+        width: 100%;
+        height: 100%;
+        position: absolute;
         display:flex;
         flex-direction: column;
+
+        &.next{
+            transform: translateX(100%);
+        }
+
+        &.previous{
+            transform: translateX(-100%);
+        }
+
         .years{
             display:flex;
             flex-grow: 1;

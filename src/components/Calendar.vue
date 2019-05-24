@@ -1,12 +1,20 @@
 <template>
   <div class="calendar" @click.stop="">
-    <transition name="fade">
-      <day-selector v-if="dateView" v-model="date"
-        :selectedMonth="month" 
-        :selectedYear="year" 
-        @nextMonth="onNextMonth" 
-        @previousMonth="onPreviousMonth"
-        @view-change="onViewChange"></day-selector>
+    <transition :name="transition">
+      <div v-if="dateView" class="container" 
+      :class="{
+        'slide-next' : slide === 'next',
+        'slide-previous' : slide === 'previous',
+        'slide' : slide !== ''}">
+        <day-selector v-model="date" v-for="i in numOfSelectors" :key="i" 
+          :class="{'next' : slide === 'next' && i === 2, 
+          'previous' : slide === 'previous' && i == 2}"
+          :selectedMonth="(month + i - 1) - (slide === 'previous' ? 2 : 0)" 
+          :selectedYear="year" 
+          @nextMonth="onNextMonth" 
+          @previousMonth="onPreviousMonth"
+          @view-change="onViewChange"></day-selector>
+        </div>
     </transition>
     <transition name="fade">
       <month-selector v-if="monthView" 
@@ -15,7 +23,21 @@
         @view-change="onViewChange"></month-selector>
     </transition>
      <transition name="fade">
-      <year-selector v-if="yearView" v-model="yy"></year-selector>
+        <div v-if="yearView" class="container" 
+          :class="{
+            'slide-next' : slide === 'next',
+            'slide-previous' : slide === 'previous',
+            'slide' : slide !== ''}">
+          <year-selector
+            v-for="i in numOfSelectors" :key="i" 
+            :class="{'next' : slide === 'next' && i === 2, 
+              'previous' : slide === 'previous' && i == 2}" 
+            v-model="yy" 
+            :page="(yearPage + i - 1) - (slide === 'previous' ? 2 : 0)"
+            @nextYear="onNextYear"
+            @previousYear="onPreviousYear">
+          </year-selector>
+       </div>
      </transition>
   </div>
 </template>
@@ -49,7 +71,11 @@ export default class Calendar extends Vue {
   dateView:boolean = true;
   monthView:boolean = false;
   yearView:boolean = false;
-  transitionDelay:number = 250;
+  transitionDelay:number = 0;
+  numOfSelectors:number = 1;
+  transition:string = "fade";
+  slide:string = "";
+  yearPage:number = 0;
 
   get view(){
     return this.mode;
@@ -89,21 +115,53 @@ export default class Calendar extends Vue {
     public value!: Date;
 
   public onNextMonth() {
-    if (this.month === 11) {
+    this.numOfSelectors = 2;
+    this.slide = "next"
+    setTimeout(() => {
+      this.numOfSelectors = 1;
+      this.slide = "";
+      if (this.month === 11) {
         this.month = 0;
         this.year ++;
-    } else {
+      } else {
         this.month ++;
-    }
+      }
+    }, 500);
   }
 
   public onPreviousMonth() {
-    if (this.month === 0) {
+    this.numOfSelectors = 2;
+    this.slide = "previous";
+    setTimeout(() => {
+      this.numOfSelectors = 1;
+      this.slide = "";
+      if (this.month === 0) {
         this.month = 11;
         this.year --;
-    } else {
+      } else {
         this.month --;
-    }
+      }
+    }, 500);
+  }
+
+  public onNextYear() {
+    this.numOfSelectors = 2;
+    this.slide = "next"
+    setTimeout(() => {
+      this.numOfSelectors = 1;
+      this.slide = "";
+      this.yearPage ++;
+    }, 500);
+  }
+
+  onPreviousYear() {
+    this.numOfSelectors = 2;
+    this.slide = "previous"
+    setTimeout(() => {
+      this.numOfSelectors = 1;
+      this.slide = "";
+      this.yearPage --;
+    }, 500);
   }
 
   public created() {
@@ -153,7 +211,10 @@ export default class Calendar extends Vue {
 
 <style lang="less">
   .calendar{
-    display:flex;
+    width:100%;
+    height:100%;
+    position: relative;
+    overflow: hidden;
   }
   .fade-enter-active, .fade-leave-active {
     transition: all .25s;
@@ -167,5 +228,21 @@ export default class Calendar extends Vue {
   }
   .fade-enter-to, .fade-leave {
     transform: scale(1);
+  }
+  .slide {
+    transition: all .25s;
+    transform:  translateX(0);
+  }
+  .slide-next{
+    transform:  translateX(-100%);
+  }
+
+  .slide-previous{
+    transform:  translateX(100%);
+  }
+  
+  .container{
+    width: 100%;
+    height: 100%;
   }
 </style>

@@ -66,6 +66,9 @@ export default class MonthSelector extends Vue {
          align-items: center;
     }
     .month-selector{
+        width: 100%;
+        height: 100%;
+        position: absolute;
         display: flex;
         flex-direction: column;
         .months{
