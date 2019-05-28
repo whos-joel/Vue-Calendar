@@ -1,25 +1,7 @@
 <template>
     <div class="day-selector">
-        <!-- <div class="btn-container">
-            <div class="month-year-btn btn" @click="setView">
-                {{monthYear}}
-            </div>
-            <div>
-                <a href="#" class="btn" @click="$emit('previousMonth')">
-                    &lt;
-                </a>
-            </div>
-            <div>
-                <a href="#" class="btn" @click="nextMonth()">
-                    &gt;
-                </a>
-            </div>
-        </div> -->
-        <div class="days-of-the-week">
-            <div class="day" v-for="i in 7" :key="i">
-                {{getDayName(i-1)}}
-            </div>
-        </div>
+        <days-of-week v-if="daysOfWeekHeader" :first-day-of-week="firstDayOfWeek">
+        </days-of-week>
         <div class="dates">
             <div class="date" v-for="date in dates" :key="date.id">
                 <a href="#" 
@@ -37,8 +19,13 @@
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import moment from 'moment';
 import DatePickerData from './DatePickerData';
+import DaysOfWeek from './DaysOfWeek.vue';
 
-@Component
+@Component({
+    components:{
+        DaysOfWeek
+    }
+})
 export default class DaySelector extends Vue {
     get monthYear() {
         return moment(new Date(this.selectedYear, this.selectedMonth)).format('MMM YYYY');
@@ -61,6 +48,12 @@ export default class DaySelector extends Vue {
     @Prop({default: 1})
     public firstDayOfTheWeek!: number;
 
+    @Prop({default: 0})
+    firstDayOfWeek!:number;
+
+    @Prop({default: false})
+    daysOfWeekHeader!:boolean;
+
     public getDates(year: number, month: number): DatePickerData[] {
         const data: DatePickerData[] = [];
         for (let i = 0; i < 42; i++) {
@@ -71,7 +64,7 @@ export default class DaySelector extends Vue {
     }
 
     public getData(n: number) {     
-        const date = this.getDate(n + 1);
+        const date = this.getDate(n + 1 + this.firstDayOfWeek);
         const isToday = date.getTime() === new Date().setHours(0, 0, 0, 0);
         const selected = date.getTime() === this.value.getTime();
         const inSelectedMonth = date.getMonth() === this.selectedMonth;

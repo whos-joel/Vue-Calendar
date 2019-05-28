@@ -8,6 +8,8 @@
         @next="onNextMonth"
         @previous="onPreviousMonth">
         </next-previous>
+        <days-of-week :first-day-of-week="1">
+        </days-of-week>
         <div class="slide-container" 
         :class="{
           'slide-next' : slide === 'next',
@@ -18,6 +20,7 @@
             'previous' : slide === 'previous' && i == 2}"
             :selectedMonth="(month + i - 1) - (slide === 'previous' ? 2 : 0)" 
             :selectedYear="year" 
+            :first-day-of-week="1"
             @nextMonth="onNextMonth" 
             @previousMonth="onPreviousMonth"
             @view-change="onViewChange"></day-selector>
@@ -63,6 +66,8 @@ import DaySelector from './DaySelector.vue';
 import MonthSelector from './MonthSelector.vue';
 import YearSelector from './YearSelector.vue';
 import NextPrevious from './NextPrevious.vue';
+import DaysOfWeek from './DaysOfWeek.vue';
+
 import moment from 'moment';
 
 @Component({
@@ -70,7 +75,8 @@ import moment from 'moment';
     DaySelector,
     MonthSelector,
     YearSelector,
-    NextPrevious
+    NextPrevious,
+    DaysOfWeek
   },
 })
 export default class Calendar extends Vue {
