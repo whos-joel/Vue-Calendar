@@ -26,11 +26,11 @@ export default class NextPrevious extends Vue {
     @Prop(String)
     info!:string;
 
-    @Prop(Boolean)
-    disableNext:boolean = false;
+    @Prop({default:false})
+    disableNext!:boolean;
 
-    @Prop(Boolean)
-    disablePrevious:boolean = false;
+    @Prop({default:false})
+    disablePrevious!:boolean;
 
     @Emit("infoClick")
     infoClick(){

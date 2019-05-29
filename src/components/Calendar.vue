@@ -3,10 +3,12 @@
     <transition :name="transition">
       <div v-if="dateView" class="component-group">
         <next-previous
-        :info="monthYear"
-        @infoClick="setMonthView"
-        @next="onNextMonth"
-        @previous="onPreviousMonth">
+          :disableNext="disableNextMonth"
+          :disablePrevious="disablePreviousMonth"
+          :info="monthYear"
+          @infoClick="setMonthView"
+          @next="onNextMonth"
+          @previous="onPreviousMonth">
         </next-previous>
         <days-of-week :first-day-of-week="1">
         </days-of-week>
@@ -38,8 +40,8 @@
      <transition name="fade">
        <div v-if="yearView" class="component-group">
             <next-previous
-            :disableNext="disableNext"
-            :disablePrevious="disablePrevious"
+            :disableNext="disableNextYear"
+            :disablePrevious="disablePreviousYear"
             @next="onNextYear"
             @previous="onPreviousYear">
             </next-previous>
@@ -103,8 +105,10 @@ export default class Calendar extends Vue {
   transition:string = "fade";
   slide:string = "";
   yearPage:number = 0;
-  disableNext:boolean = false;
-  disablePrevious:boolean = false;
+  disableNextYear:boolean = false;
+  disablePreviousYear:boolean = false;
+  disableNextMonth:boolean = false;
+  disablePreviousMonth:boolean = false;
 
   get view(){
     return this.mode;
@@ -155,8 +159,8 @@ export default class Calendar extends Vue {
   public max?: Date;
 
   public onNextMonth() {
-    if(this.isAtMaxMonth())
-        return;
+    this.isAtMaxMonth(this.month + 2)
+    this.isAtMinMonth(this.month + 2)
     this.numOfSelectors = 2;
     this.slide = "next"
     setTimeout(() => {
@@ -172,8 +176,8 @@ export default class Calendar extends Vue {
   }
 
   public onPreviousMonth() {
-    if(this.isAtMinMonth())
-      return;
+    this.isAtMaxMonth(this.month - 2)
+    this.isAtMinMonth(this.month - 2)
     this.numOfSelectors = 2;
     this.slide = "previous";
     setTimeout(() => {
@@ -191,8 +195,8 @@ export default class Calendar extends Vue {
   public onNextYear() {
     this.numOfSelectors = 2;
     this.slide = "next"
-    this.setDisableNext(this.yearPage + 2);
-    this.setDisablePrevious(this.yearPage +2);
+    this.setDisableNextYear(this.yearPage + 1);
+    this.setDisablePreviousYear(this.yearPage + 1);
     setTimeout(() => {
       this.numOfSelectors = 1;
       this.slide = "";
@@ -203,8 +207,8 @@ export default class Calendar extends Vue {
   onPreviousYear() {
     this.numOfSelectors = 2;
     this.slide = "previous"
-    this.setDisableNext(this.yearPage - 1);
-    this.setDisablePrevious(this.yearPage -1);
+    this.setDisableNextYear(this.yearPage - 1);
+    this.setDisablePreviousYear(this.yearPage -1);
     setTimeout(() => {
       this.numOfSelectors = 1;
       this.slide = "";
@@ -212,28 +216,34 @@ export default class Calendar extends Vue {
     }, 500);
   }
 
-  setDisableNext(n:number){
+  setDisableNextYear(n:number){
     let maxYear = this.year + (n * 16) + 15
     if(this.max && maxYear >= this.max.getFullYear())
-      this.disableNext = true;
+      this.disableNextYear = true;
     else
-      this.disableNext = false; 
+      this.disableNextYear = false; 
   }
 
-  setDisablePrevious(n:number){
+  setDisablePreviousYear(n:number){
     let minYear = this.year + n * 16
     if(this.min && minYear <= this.min.getFullYear())
-      this.disablePrevious = true;
+      this.disablePreviousYear = true;
     else
-      this.disablePrevious = false; 
+      this.disablePreviousYear = false; 
   }
 
-  isAtMaxMonth(){
-    return this.max && this.month >= this.max.getMonth() && this.year >= this.max.getFullYear();
+  isAtMaxMonth(month:number){
+    if(this.max && month > this.max.getMonth() && this.year >= this.max.getFullYear())
+      this.disableNextMonth = true;
+    else
+      this.disableNextMonth = false;
   }
 
-  isAtMinMonth(){
-    return this.min && this.month <= this.min.getMonth() && this.year <= this.min.getFullYear()
+  isAtMinMonth(month:number){
+    if(this.min && month < this.min.getMonth() && this.year <= this.min.getFullYear())
+      this.disablePreviousMonth = true;
+    else
+      this.disablePreviousMonth = false;
   }
 
   public created() {
@@ -259,7 +269,9 @@ export default class Calendar extends Vue {
       this.monthView = false;
       this.yearView = false;
       setTimeout(() => {
-         this.dateView = true;
+        this.isAtMaxMonth(this.month)
+        this.isAtMinMonth(this.month)
+        this.dateView = true;
       }, this.transitionDelay);
   }
 
@@ -275,7 +287,8 @@ export default class Calendar extends Vue {
       this.dateView = false;
       this.monthView = false;
       setTimeout(() => {
-        this.setDisableNext(this.yearPage);
+        this.setDisableNextYear(this.yearPage);
+        this.setDisablePreviousYear(this.yearPage);
         this.yearView = true;
       }, this.transitionDelay);
   }
