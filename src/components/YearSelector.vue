@@ -3,11 +3,16 @@
             <div class="years">
                 <div v-for="year in years"
                     :key="year.id" class="year">
-                    <a href="#"
+                    <a v-if="year.isWithinRange"
+                        href="#"
                         :class="{'selected' : year.isSelected}"
                         @click="setYear(year.value)">
                         {{year.value}}
                     </a>
+                    <div v-else
+                        class="greyed-out">
+                        {{year.value}}
+                    </div>
                 </div>
             </div>
     </div>
@@ -25,6 +30,12 @@ export default class YearPicker extends Vue {
     @Prop(Number)
     public value!: number;
 
+    @Prop()
+    public min?: Date;
+
+    @Prop()
+    public max?: Date;
+
     get years() {
         const data: object[] = [];
         for (let i = 0; i < 16; i++) {
@@ -34,9 +45,32 @@ export default class YearPicker extends Vue {
                     id,
                     value: val,
                     isSelected: val === this.value,
+                    isWithinRange: this.isWithinRange(val)
                 };
         }
         return data;
+    }
+
+     isWithinRange(year:number):boolean{
+        if(this.min && this.max)
+            return this.isGreaterThanMin(year, this.min) && this.isLessThanMax(year, this.max)
+        if(this.min)
+            return this.isGreaterThanMin(year, this.min)
+        if(this.max)
+           this.isLessThanMax(year, this.max)
+        return true;
+    }
+
+    isGreaterThanMin(year:number, min:Date):boolean{
+        if(year >= min.getFullYear())
+            return true;
+        return false;
+    }
+
+    isLessThanMax(year:number, max:Date):boolean{
+        if(year <= max.getFullYear())
+            return true;
+        return false;
     }
 
     @Emit("previousYear")
@@ -50,7 +84,6 @@ export default class YearPicker extends Vue {
     }
 
     public setYear(val: number) {
-        this.page = 0;
         this.$emit('input', val);
     }
 
@@ -83,7 +116,7 @@ export default class YearPicker extends Vue {
             .year{
                 width: calc(100% / 4);
                 padding: 2px;
-                a{
+                a, .greyed-out{
                     padding: 10px;
                     border: 1px solid #ccc;
                     cursor: pointer;
@@ -95,6 +128,10 @@ export default class YearPicker extends Vue {
                     &.selected{
                         border-color: #009922;
                     }
+                }
+                .greyed-out{
+                    border-color: #eee;
+                    color: #ccc;
                 }
             }
         }

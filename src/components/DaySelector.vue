@@ -4,12 +4,16 @@
         </days-of-week>
         <div class="dates">
             <div class="date" v-for="date in dates" :key="date.id">
-                <a href="#" 
+                <a href="#" v-if="date.isWithinRange"
                     :class="{'today' : date.isToday, 'selected': date.isSelected, 'greyed-out': !date.isInSelectedMonth}"
                     :data-date="date.ticks"
                     @click="setDate(date.value)">
                     {{date.value}}
                 </a>
+                <div v-if="!date.isWithinRange"
+                     :class="{'greyed-out' : !date.isWithinRange}">
+                        {{date.value}}
+                </div>
             </div>
         </div>
     </div>
@@ -54,8 +58,14 @@ export default class DaySelector extends Vue {
     @Prop({default: false})
     daysOfWeekHeader!:boolean;
 
-    public getDates(year: number, month: number): DatePickerData[] {
-        const data: DatePickerData[] = [];
+    @Prop()
+    public min?: Date;
+
+    @Prop()
+    public max?: Date;
+
+    public getDates(year: number, month: number): object[] {
+        const data: object[] = [];
         for (let i = 0; i < 42; i++) {
             const id = i;
             data[i] = this.getData(id);
@@ -68,13 +78,23 @@ export default class DaySelector extends Vue {
         const isToday = date.getTime() === new Date().setHours(0, 0, 0, 0);
         const selected = date.getTime() === this.value.getTime();
         const inSelectedMonth = date.getMonth() === this.selectedMonth;
-
-        return new DatePickerData(n, date, isToday, selected, inSelectedMonth);
+        const isWithinRange = this.getWithinRange(+date);
+        return new DatePickerData(n, date, isToday, selected, inSelectedMonth, isWithinRange);
     }
 
     public getDate(n: number) {
         const day = n - this.getFirstDayOfMonth(this.selectedYear, this.selectedMonth);
         return new Date(this.selectedYear, this.selectedMonth, day);
+    }
+
+    getWithinRange(date:number):boolean{
+        if(this.min && this.max)
+            return date >= +this.min && date <= +this.max;
+        if(this.min)
+            return date >= +this.min;
+        if(this.max)
+            return date <= +this.max;
+        return true;
     }
 
     public getFirstDayOfMonth(year: number, month: number) {
@@ -150,6 +170,9 @@ export default class DaySelector extends Vue {
                     &.selected{
                         border-color: #009922;
                     }
+                  
+                }
+                a, > div{
                     &.greyed-out{
                         border-color: #eee;
                         color: #ccc;

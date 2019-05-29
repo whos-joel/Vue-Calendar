@@ -4,7 +4,7 @@
          <input type="test" :value="format" @click="openCalendar"/>
          <transition name="fade">
           <div v-if="open" class="calendar-container">
-              <calendar v-model="date"></calendar>
+              <calendar v-model="date" :max="max" :min="min"></calendar>
           </div>
          </transition>
     </div>
@@ -24,6 +24,8 @@ import moment from 'moment';
 export default class DateInput extends Vue {
 
     open:boolean = false;
+    min:Date = new Date(1979,3,10);
+    max:Date = new Date(2039,7,10);
 
     get date() {
       return this.value;

@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
             <div class="btn-container">
-                <a href="#" class="btn previous" @click="previous">
+                <a v-if="!disablePrevious" href="#" class="btn previous" @click="previous">
                     &lt;
                 </a>
             </div>
@@ -11,7 +11,7 @@
                 </a>
             </div>
             <div class="btn-container">
-                <a href="#" class="btn next" @click="next">
+                <a v-if="!disableNext" href="#" class="btn next" @click="next">
                     &gt;
                 </a>
             </div>
@@ -25,6 +25,12 @@ import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 export default class NextPrevious extends Vue {
     @Prop(String)
     info!:string;
+
+    @Prop(Boolean)
+    disableNext:boolean = false;
+
+    @Prop(Boolean)
+    disablePrevious:boolean = false;
 
     @Emit("infoClick")
     infoClick(){

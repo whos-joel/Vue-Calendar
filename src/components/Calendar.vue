@@ -21,6 +21,7 @@
             :selectedMonth="(month + i - 1) - (slide === 'previous' ? 2 : 0)" 
             :selectedYear="year" 
             :first-day-of-week="1"
+            :max="max" :min="min"
             @nextMonth="onNextMonth" 
             @previousMonth="onPreviousMonth"
             @view-change="onViewChange"></day-selector>
@@ -31,11 +32,14 @@
       <month-selector v-if="monthView" 
         v-model="mm" 
         :year="yy" 
+        :max="max" :min="min"
         @view-change="onViewChange"></month-selector>
     </transition>
      <transition name="fade">
        <div v-if="yearView" class="component-group">
             <next-previous
+            :disableNext="disableNext"
+            :disablePrevious="disablePrevious"
             @next="onNextYear"
             @previous="onPreviousYear">
             </next-previous>
@@ -50,6 +54,7 @@
                   'previous' : slide === 'previous' && i == 2}" 
                 v-model="yy" 
                 :page="(yearPage + i - 1) - (slide === 'previous' ? 2 : 0)"
+                :max="max" :min="min"
                 @nextYear="onNextYear"
                 @previousYear="onPreviousYear">
               </year-selector>
@@ -98,6 +103,8 @@ export default class Calendar extends Vue {
   transition:string = "fade";
   slide:string = "";
   yearPage:number = 0;
+  disableNext:boolean = false;
+  disablePrevious:boolean = false;
 
   get view(){
     return this.mode;
@@ -131,6 +138,7 @@ export default class Calendar extends Vue {
   set yy(val: number) {
       this.setMonthView();
       this.year = val;
+      this.yearPage = 0;
   }
 
   get monthYear() {
@@ -140,7 +148,15 @@ export default class Calendar extends Vue {
   @Prop({default: () => new Date()})
     public value!: Date;
 
+  @Prop()
+  public min?: Date;
+
+  @Prop()
+  public max?: Date;
+
   public onNextMonth() {
+    if(this.isAtMaxMonth())
+        return;
     this.numOfSelectors = 2;
     this.slide = "next"
     setTimeout(() => {
@@ -156,6 +172,8 @@ export default class Calendar extends Vue {
   }
 
   public onPreviousMonth() {
+    if(this.isAtMinMonth())
+      return;
     this.numOfSelectors = 2;
     this.slide = "previous";
     setTimeout(() => {
@@ -173,6 +191,8 @@ export default class Calendar extends Vue {
   public onNextYear() {
     this.numOfSelectors = 2;
     this.slide = "next"
+    this.setDisableNext(this.yearPage + 2);
+    this.setDisablePrevious(this.yearPage +2);
     setTimeout(() => {
       this.numOfSelectors = 1;
       this.slide = "";
@@ -183,11 +203,37 @@ export default class Calendar extends Vue {
   onPreviousYear() {
     this.numOfSelectors = 2;
     this.slide = "previous"
+    this.setDisableNext(this.yearPage - 1);
+    this.setDisablePrevious(this.yearPage -1);
     setTimeout(() => {
       this.numOfSelectors = 1;
       this.slide = "";
       this.yearPage --;
     }, 500);
+  }
+
+  setDisableNext(n:number){
+    let maxYear = this.year + (n * 16) + 15
+    if(this.max && maxYear >= this.max.getFullYear())
+      this.disableNext = true;
+    else
+      this.disableNext = false; 
+  }
+
+  setDisablePrevious(n:number){
+    let minYear = this.year + n * 16
+    if(this.min && minYear <= this.min.getFullYear())
+      this.disablePrevious = true;
+    else
+      this.disablePrevious = false; 
+  }
+
+  isAtMaxMonth(){
+    return this.max && this.month >= this.max.getMonth() && this.year >= this.max.getFullYear();
+  }
+
+  isAtMinMonth(){
+    return this.min && this.month <= this.min.getMonth() && this.year <= this.min.getFullYear()
   }
 
   public created() {
@@ -217,7 +263,7 @@ export default class Calendar extends Vue {
       }, this.transitionDelay);
   }
 
-   setMonthView(){
+  setMonthView(){
       this.dateView = false;
       this.yearView = false;
       setTimeout(() => {
@@ -229,7 +275,8 @@ export default class Calendar extends Vue {
       this.dateView = false;
       this.monthView = false;
       setTimeout(() => {
-         this.yearView = true;
+        this.setDisableNext(this.yearPage);
+        this.yearView = true;
       }, this.transitionDelay);
   }
 }
